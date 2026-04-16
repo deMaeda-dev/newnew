@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>나의 여행 위시리스트</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sky: #ddeef8;
+      --sky-mid: #c4dff2;
+      --sky-deep: #9ec8e8;
+      --mist: #eef6fc;
+      --white: #ffffff;
+      --blue-text: #3b7ca8;
+      --blue-dark: #2b5f84;
+      --ink: #2a3d4f;
+      --soft: #7a9db8;
+      --accent: #b8d8ec;
+      --border: rgba(160,205,230,0.4);
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #e8f3fb;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% -10%, #d4ecf7 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, #ddeef8 0%, transparent 60%);
+      min-height: 100vh;
+      color: var(--ink);
+    }
+
+    /* stars */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 12% 10%, rgba(140,195,225,0.9) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 7%,   rgba(140,195,225,0.7) 0%, transparent 100%),
+        radial-gradient(2px 2px at 87% 22%,  rgba(140,195,225,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 4% 38%,   rgba(140,195,225,0.8) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 52% 16%, rgba(140,195,225,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 5%,   rgba(140,195,225,0.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 93% 50%,  rgba(140,195,225,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 47% 2%,   rgba(140,195,225,0.7) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 20% 80%, rgba(140,195,225,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 78% 88%,  rgba(140,195,225,0.3) 0%, transparent 100%);
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 3.5rem 2rem 2.8rem;
+    }
+    .star { position: absolute; color: var(--sky-deep); pointer-events: none; }
+
+    header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 5.5vw, 3.4rem);
+      color: var(--blue-dark);
+      line-height: 1.15;
+    }
+    header h1 em { font-style: italic; color: var(--blue-text); }
+
+    header p {
+      margin-top: 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+    .hline {
+      display: block; width: 50px; height: 1px;
+      background: var(--sky-deep); margin: 1rem auto 0; opacity: 0.6;
+    }
+
+    /* ── MAIN ── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    /* ── FORM ── */
+    .form-wrap {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(175,215,238,0.55);
+      border-radius: 20px;
+      padding: 2rem 2.2rem 1.8rem;
+      margin-bottom: 2.4rem;
+      box-shadow: 0 4px 32px rgba(90,160,210,0.08), 0 1px 0 rgba(255,255,255,0.8) inset;
+    }
+    .form-section-label {
+      font-size: 0.67rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--blue-text);
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .form-section-label::after {
+      content:''; flex:1; height:1px;
+      background: linear-gradient(90deg, var(--sky-mid), transparent);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem 1.4rem;
+    }
+    @media (max-width:560px) { .form-grid { grid-template-columns: 1fr; } }
+    .fg { display:flex; flex-direction:column; gap:0.28rem; }
+    .fg.full { grid-column:1/-1; }
+
+    label {
+      font-size: 0.67rem; font-weight:500;
+      letter-spacing:0.12em; text-transform:uppercase;
+      color: var(--soft);
+    }
+    input, textarea {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.88rem;
+      padding: 0.6rem 0.9rem;
+      border: 1px solid rgba(155,200,228,0.45);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.55);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      resize: none;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--sky-deep);
+      background: rgba(255,255,255,0.95);
+      box-shadow: 0 0 0 3px rgba(158,200,232,0.18);
+    }
+    input::placeholder, textarea::placeholder { color: #b2cfe0; }
+    textarea { height: 74px; }
+
+    .btn-row { display:flex; justify-content:flex-end; margin-top:1rem; }
+    .add-btn {
+      display:inline-flex; align-items:center; gap:0.45rem;
+      padding: 0.62rem 1.7rem;
+      background: linear-gradient(135deg, #80c2e4 0%, #57a3cc 100%);
+      color: white; border: none;
+      border-radius: 50px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.82rem; font-weight:500;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(80,155,200,0.32);
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .add-btn:hover { opacity:0.88; transform:translateY(-1px); box-shadow:0 6px 22px rgba(80,155,200,0.38); }
+    .add-btn:active { transform:translateY(0); }
+    .add-btn:disabled { background:var(--sky-mid); box-shadow:none; cursor:not-allowed; transform:none; }
+
+    /* ── STATS ── */
+    .stats {
+      display:flex; align-items:center; gap:1rem;
+      margin-bottom:1.3rem;
+    }
+    .stats-num {
+      font-family:'DM Serif Display',serif;
+      font-size:1.9rem; color:var(--blue-text); line-height:1;
+    }
+    .stats-sub {
+      font-size:0.7rem; color:var(--soft);
+      letter-spacing:0.1em; text-transform:uppercase;
+      margin-top:1px;
+    }
+    .stats-line { flex:1; height:1px; background:linear-gradient(90deg,var(--sky-mid),transparent); }
+
+    /* ── LIST ── */
+    #list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(308px, 1fr));
+      gap: 1.3rem;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(175,215,238,0.5);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 2px 18px rgba(90,155,205,0.09);
+      display: flex; flex-direction: column;
+      animation: fadeUp 0.38s ease;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(90,155,205,0.17); }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .card-map {
+      width:100%; height:172px;
+      background: #d8eaf5; flex-shrink:0;
+      position:relative; overflow:hidden;
+    }
+    .card-map iframe { width:100%; height:100%; border:none; display:block; }
+
+    /* subtle top fade overlay */
+    .card-map::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(to bottom,rgba(230,243,252,0.2) 0%,transparent 35%);
+      pointer-events:none;
+    }
+
+    .card-body {
+      padding:1rem 1.25rem 0.5rem;
+      flex:1; display:flex; flex-direction:column; gap:0.4rem;
+    }
+    .card-name {
+      font-family:'DM Serif Display',serif;
+      font-size:1.18rem; color:var(--blue-dark); line-height:1.2;
+    }
+    .card-loc {
+      display:flex; align-items:center; gap:0.35rem;
+      font-size:0.75rem; color:var(--blue-text); font-weight:500;
+    }
+    /* pin dot */
+    .pin {
+      width:10px; height:10px; flex-shrink:0;
+      background:var(--blue-text); border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg) scale(0.9);
+    }
+    .card-memo {
+      font-size:0.79rem; color:var(--soft); line-height:1.65;
+      font-weight:300;
+      border-left:2px solid var(--sky-mid); padding-left:0.65rem;
+      margin-top:0.1rem;
+    }
+    .card-memo:empty { display:none; }
+
+    .card-foot {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0.5rem 1.25rem 0.8rem;
+    }
+    .card-date { font-size:0.63rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); }
+    .del {
+      width:26px; height:26px; border-radius:50%;
+      border:1px solid rgba(155,200,228,0.4);
+      background:transparent; color:var(--sky-deep);
+      font-size:0.72rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:background 0.2s,color 0.2s,border-color 0.2s;
+    }
+    .del:hover { background:#fde8e8; color:#b85555; border-color:#f0b0b0; }
+
+    /* ── EMPTY ── */
+    .empty {
+      grid-column:1/-1; text-align:center;
+      padding:4.5rem 2rem;
+    }
+    .cloud-shape {
+      width:72px; height:44px; background:rgba(160,210,235,0.25);
+      border-radius:50px; margin:0 auto 1.2rem; position:relative;
+    }
+    .cloud-shape::before {
+      content:''; position:absolute; top:-20px; left:14px;
+      width:42px; height:42px;
+      background:rgba(160,210,235,0.25); border-radius:50%;
+    }
+    .empty p {
+      font-family:'DM Serif Display',serif; font-style:italic;
+      color:var(--soft); font-size:1.05rem; line-height:1.75;
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      grid-column:1/-1; text-align:center;
+      padding:3rem; color:var(--soft);
+      font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position:fixed; bottom:2rem; right:2rem;
+      padding:0.68rem 1.4rem;
+      background:rgba(43,95,132,0.88);
+      color:white; border-radius:50px;
+      font-size:0.79rem; letter-spacing:0.04em;
+      opacity:0; transform:translateY(8px);
+      transition:all 0.28s; pointer-events:none; z-index:100;
+      backdrop-filter:blur(10px);
+    }
+    #toast.show { opacity:1; transform:translateY(0); }
+    #toast.err  { background:rgba(175,65,55,0.9); }
+  </style>
+</head>
+<body>
+
+<header>
+  <!-- decorative stars -->
+  <span class="star" style="top:16px;left:9%;font-size:0.75rem;opacity:.65">✦</span>
+  <span class="star" style="top:36px;left:21%;font-size:0.45rem;opacity:.5">✦</span>
+  <span class="star" style="top:10px;right:14%;font-size:0.55rem;opacity:.55">✦</span>
+  <span class="star" style="top:48px;right:7%;font-size:0.8rem;opacity:.45">✦</span>
+  <span class="star" style="bottom:22px;left:6%;font-size:0.45rem;opacity:.4">✦</span>
+  <span class="star" style="bottom:14px;right:23%;font-size:0.4rem;opacity:.4">✦</span>
+  <span class="star" style="top:28px;left:48%;font-size:0.35rem;opacity:.45">✦</span>
+
+  <h1>나의 여행 <em>위시리스트</em></h1>
+  <p>언젠가 꼭 가고 싶은 곳들을 담아두세요</p>
+  <span class="hline"></span>
+</header>
+
+<main>
+  <div class="form-wrap">
+    <div class="form-section-label">새 여행지 추가</div>
+    <div class="form-grid">
+      <div class="fg">
+        <label for="inp-name">장소 이름 *</label>
+        <input id="inp-name" type="text" placeholder="산토리니, 교토, 파타고니아…" />
+      </div>
+      <div class="fg">
+        <label for="inp-loc">위치 *</label>
+        <input id="inp-loc" type="text" placeholder="그리스 / 일본 교토 / 아르헨티나…" />
+      </div>
+      <div class="fg full">
+        <label for="inp-memo">메모</label>
+        <textarea id="inp-memo" placeholder="가고 싶은 이유, 꼭 해보고 싶은 것, 추천 시즌…"></textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="add-btn" id="add-btn" onclick="addPlace()">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+          <path d="M5.5 1v9M1 5.5h9" stroke="white" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        목적지 추가
+      </button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div>
+      <div class="stats-num" id="count">0</div>
+      <div class="stats-sub">곳을 담았어요</div>
+    </div>
+    <div class="stats-line"></div>
+  </div>
+
+  <div id="list">
+    <div class="loading">불러오는 중 ···</div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+  // ⚠️ 배포한 Cloudflare Worker URL로 교체하세요
+  const WORKER_URL = 'https://YOUR_WORKER.YOUR_SUBDOMAIN.workers.dev';
+
+  let places = [];
+
+  async function load() {
+    try {
+      const res = await fetch(`${WORKER_URL}/places`);
+      if (!res.ok) throw new Error();
+      places = await res.json();
+      render();
+    } catch {
+      document.getElementById('list').innerHTML =
+        `<div class="empty"><div class="cloud-shape"></div><p>Worker URL을 먼저 설정해주세요.</p></div>`;
+    }
+  }
+
+  async function addPlace() {
+    const name = document.getElementById('inp-name').value.trim();
+    const loc  = document.getElementById('inp-loc').value.trim();
+    const memo = document.getElementById('inp-memo').value.trim();
+    if (!name || !loc) return toast('장소 이름과 위치는 필수입니다.', true);
+
+    const btn = document.getElementById('add-btn');
+    btn.disabled = true;
+
+    const place = {
+      id: Date.now().toString(), name,
+      location: loc, memo,
+      date: new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'short',day:'numeric'})
+    };
+
+    try {
+      const res = await fetch(`${WORKER_URL}/places`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(place)
+      });
+      if (!res.ok) throw new Error();
+      places.unshift(place);
+      render();
+      ['inp-name','inp-loc','inp-memo'].forEach(id => document.getElementById(id).value = '');
+      toast('✓  목적지가 추가되었습니다!');
+    } catch { toast('저장에 실패했습니다.', true); }
+    btn.disabled = false;
+  }
+
+  async function deletePlace(id) {
+    if (!confirm('이 장소를 삭제할까요?')) return;
+    try {
+      await fetch(`${WORKER_URL}/places/${id}`, { method: 'DELETE' });
+      places = places.filter(p => p.id !== id);
+      render();
+      toast('삭제되었습니다.');
+    } catch { toast('삭제에 실패했습니다.', true); }
+  }
+
+  function mapSrc(location) {
+    return `https://maps.google.com/maps?q=${encodeURIComponent(location)}&output=embed&z=10&hl=ko`;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function render() {
+    document.getElementById('count').textContent = places.length;
+    const list = document.getElementById('list');
+    if (!places.length) {
+      list.innerHTML = `<div class="empty"><div class="cloud-shape"></div><p>아직 추가된 여행지가 없어요.<br>첫 번째 목적지를 담아보세요 ✦</p></div>`;
+      return;
+    }
+    list.innerHTML = places.map(p => `
+      <div class="card">
+        <div class="card-map">
+          <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            src="${mapSrc(p.location)}" allowfullscreen></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-name">${esc(p.name)}</div>
+          <div class="card-loc"><div class="pin"></div>${esc(p.location)}</div>
+          ${p.memo ? `<div class="card-memo">${esc(p.memo)}</div>` : ''}
+        </div>
+        <div class="card-foot">
+          <span class="card-date">${esc(p.date)}</span>
+          <button class="del" onclick="deletePlace('${p.id}')" title="삭제">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function toast(msg, isErr=false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = 'show'+(isErr?' err':'');
+    clearTimeout(t._t); t._t = setTimeout(()=>t.className='',3000);
+  }
+
+  load();
+</script>
+</body>
+</html>
